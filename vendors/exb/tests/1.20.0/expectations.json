@@ -1,0 +1,148 @@
+{
+  "allModeQuery": {
+    "terms": [
+      "SourceManager"
+    ],
+    "minMatches": 13
+  },
+  "conceptualQueries": [
+    {
+      "terms": [
+        "feature",
+        "layer"
+      ],
+      "minResults": 3,
+      "minRelatedDocs": 1,
+      "expectApiIdWithin": {
+        "apiId": "jimu-core::FeatureLayerDataSource",
+        "top": 12
+      }
+    }
+  ],
+  "fuzzyQueries": [
+    {
+      "terms": [
+        "SettingSecton"
+      ],
+      "topApiId": "jimu-ui/advanced/setting-components::SettingSection"
+    },
+    {
+      "terms": [
+        "DataSrcManager"
+      ],
+      "topApiId": "jimu-core::DataSourceManager"
+    },
+    {
+      "terms": [
+        "WidgetMgr"
+      ],
+      "topApiId": "jimu-core::WidgetManager"
+    }
+  ],
+  "jsxAttributeQuery": {
+    "terms": [
+      "DataSourceComponentProps#onDataSourceStatusChange"
+    ],
+    "scope": "common/list",
+    "expectUsage": {
+      "path": "{{VENDOR_ROOT}}/client/dist/widgets/common/list/src/runtime/components/data-source/data-source-component.tsx",
+      "line": 318,
+      "usage_kind": "jsx-prop"
+    }
+  },
+  "literalQueries": [
+    {
+      "terms": [
+        "DataSourceManager"
+      ],
+      "topApiId": "jimu-core::DataSourceManager"
+    },
+    {
+      "terms": [
+        "WidgetManager"
+      ],
+      "topApiId": "jimu-core::WidgetManager"
+    },
+    {
+      "terms": [
+        "SettingSection"
+      ],
+      "topApiId": "jimu-ui/advanced/setting-components::SettingSection"
+    },
+    {
+      "terms": [
+        "JimuMapViewComponent"
+      ],
+      "topApiId": "jimu-arcgis::JimuMapViewComponent"
+    },
+    {
+      "terms": [
+        "DataSourceManager"
+      ],
+      "member": "getDataSource",
+      "topApiId": "jimu-core::DataSourceManager"
+    }
+  ],
+  "scopedQuery": {
+    "terms": [
+      "DataSourceStatus.NotReady"
+    ],
+    "apiId": "jimu-core::DataSourceStatus.NotReady",
+    "scopes": [
+      "common/list",
+      "client/dist/widgets/common/list"
+    ],
+    "expectLines": {
+      "{{VENDOR_ROOT}}/client/dist/widgets/common/list/src/runtime/components/data-source/data-count.tsx": [
+        32,
+        33
+      ],
+      "{{VENDOR_ROOT}}/client/dist/widgets/common/list/src/runtime/components/list-status-component/empty-and-not-ready-tips.tsx": [
+        29
+      ],
+      "{{VENDOR_ROOT}}/client/dist/widgets/common/list/src/runtime/components/list-status-component/record-load-status-a11y.tsx": [
+        22,
+        23
+      ]
+    }
+  },
+  "semanticQueries": [
+    {
+      "terms": [
+        "loading"
+      ],
+      "expectApiId": "jimu-ui::Loading",
+      "withinTop": 8
+    },
+    {
+      "terms": [
+        "setting"
+      ],
+      "expectApiId": "jimu-ui/advanced/setting-components::SettingSection",
+      "withinTop": 12
+    }
+  ],
+  "thinQueries": [
+    {
+      "terms": [
+        "widgetMutableStatePropChange"
+      ],
+      "expectMentions": true
+    },
+    {
+      "terms": [
+        "zzznotarealapi123"
+      ],
+      "expectResults": 0
+    }
+  ],
+  "knownGoodApiIds": [
+    "jimu-core::WidgetManager.getInstance",
+    "jimu-core::DataSourceManager#getDataSource",
+    "jimu-arcgis::JimuMapViewComponent",
+    "jimu-ui/advanced/setting-components::JimuLayerViewSelectorDropdown",
+    "jimu-ui/advanced/setting-components::SettingSection"
+  ],
+  "maxUnresolvedRatio": 0.05,
+  "minApiUsageRatio": 0.25
+}

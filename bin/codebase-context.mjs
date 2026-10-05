@@ -20,7 +20,8 @@ const commands = {
   init: { script: 'src/init.mjs', about: 'Write .codebase-context/config.json (--exb <path> [--force])' },
   refresh: { script: 'src/ai-refresh.mjs', about: 'Graphs, then index, then knowledge (--graph-only | --no-graph)' },
   'combine-dts': { script: 'src/combine-dts.mjs', about: 'Combine a folder of .d.ts files into one file' },
-  install: { script: 'src/install.mjs', about: 'Link skills and write instructions and prompts into .github (--dry-run, --force)' },
+  pack: { script: 'src/pack.mjs', about: 'Pack a versioned vendor index ZIP (--vendor <id>, --out <zip>)' },
+  install: { script: 'src/install.mjs', about: 'Install guidance and optional index (--prebuilt <zip|HTTPS URL>, --sha256 <hash>, --dry-run, --force)' },
   test: { about: 'Run the tool tests against the project' }
 };
 

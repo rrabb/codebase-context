@@ -8,17 +8,9 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { loadTsv, indexExists, INDEX_ROOT, ROOT } from './helpers.mjs';
 import { VENDOR_ROOT } from '../src/lib/vendor.mjs';
+import { installedExpectations } from '../src/lib/test-expectations.mjs';
 
-const KNOWN_GOOD_API_IDS = [
-  'jimu-core::WidgetManager.getInstance',
-  'jimu-core::DataSourceManager#getDataSource',
-  'jimu-arcgis::JimuMapViewComponent',
-  'jimu-ui/advanced/setting-components::JimuLayerViewSelectorDropdown',
-  'jimu-ui/advanced/setting-components::SettingSection',
-];
-
-const MAX_UNRESOLVED_RATIO = 0.05;
-const MIN_API_USAGE_RATIO = 0.25;
+const { knownGoodApiIds: KNOWN_GOOD_API_IDS, maxUnresolvedRatio: MAX_UNRESOLVED_RATIO, minApiUsageRatio: MIN_API_USAGE_RATIO } = installedExpectations();
 const PUBLIC_VISIBILITIES = new Set([
   'public-documented',
   'public-storybook',

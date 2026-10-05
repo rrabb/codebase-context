@@ -23,10 +23,14 @@ Repo: https://github.com/rrabb/codebase-context
 | `refresh` | codebase-memory graphs, then `index`, then `knowledge` |
 | `combine-dts <in> <out>` | Combine a folder of `.d.ts` files |
 | `install [--dry-run] [--force]` | Link the vendor skills into `.github/skills/` and write the instructions and prompts from templates (project graph names and vendor root filled in). `--force` backs up hand-made files to `.codebase-context/backup/` first. |
+| `pack [--vendor exb] [--out <zip>]` | Pack the configured vendor indexes with version metadata and per-file SHA-256 hashes. |
+| `install --prebuilt <zip or HTTPS URL> [--sha256 <hash>]` | Validate a matching vendor bundle, install it, rebase source paths to the configured root, then install guidance. Existing indexes require `--force`; `--dry-run` validates without replacement. |
 | `test` | Tests against the project's indexes |
 
 Outputs go to the project's `.ai-context/`. Details: [docs/ai-index.md](docs/ai-index.md), [docs/EXB-API-USAGE-INDEX-SPEC.md](docs/EXB-API-USAGE-INDEX-SPEC.md).
 
 ## Status
 
-Phase 1: the engine runs outside the project. The indexers still contain ExB paths; moving them into `vendors/exb/` is phase 2. Skills, instructions, and prompts move here in phase 3.
+The engine, ExB skills, templates, and version-specific test expectations live here. Vendor folders come from project config. Pre-built vendor indexes can be packed and installed without running generators; graphs and project facts remain local. Public bundle upload awaits a redistribution review. Generalizing the remaining ExB-specific indexing rules and adding an MCP server are deferred.
+
+See [docs/prebuilt-indexes.md](docs/prebuilt-indexes.md) for bundles and versioned tests, and [docs/mcp-design.md](docs/mcp-design.md) for the deferred server proposal. No MCP server is implemented.

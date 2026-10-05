@@ -12,11 +12,11 @@ and the repo memory `/memories/repo/exb-runtime-patterns.md`.
 
 **Runtime here is ExB 1.20.0** → ArcGIS Maps SDK for JavaScript 5.0.x, Calcite 5.0.x, React 19, Node 24.
 
-## Golden rule: ground in the OOTB source first
+## Golden rule: ground in supported local source
 
 The installed `.d.ts` files **and the readable TypeScript source of the OOTB Esri widgets** are the
 source of truth for this exact version. **Before recalling an API from memory or writing a feature,
-find the OOTB widget that already does something similar and read its source** — signatures and
+find a supported SDK sample or OOTB widget that already does something similar and read its source** - signatures and
 patterns change between ExB releases. The OOTB widgets live under
 `ArcGISExperienceBuilder/client/dist/widgets/**` (the `arcgis/*` and `common/*` trees) and are indexed
 by task in **[references/ootb-widget-index.md](references/ootb-widget-index.md)**.

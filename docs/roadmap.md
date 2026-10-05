@@ -7,13 +7,13 @@ Working notes for codebase-context: open work, decisions with their reasons, and
 | # | Item | Notes |
 | --- | --- | --- |
 | 1 | Remove the install backup in cpe-exb | `cpe-exb/.codebase-context/backup/2026-10-05T20-52-37-288Z/` holds the skills and instructions replaced by the first `install --force`. Delete once the linked skills are confirmed in the chat customizations view. The folder is ignored by `.codebase-context/.gitignore`. |
-| 2 | Publish pre-built index bundles as GitHub Release assets | Add `pack` (zip `.ai-context/<vendor>` plus a version file, for example `exb-1.20.0-index.zip`) and `install --prebuilt <zip or URL>`. See "Packaging pre-built knowledge" below. |
+| 2 | Pre-built bundles implemented; public upload pending | `pack` and `install --prebuilt <zip or HTTPS URL>` support exact version checks, hashes, path rebasing, and staged replacement. Real 1.20 bundle tested. User chose to keep assets local pending Esri redistribution review. See `docs/prebuilt-indexes.md`. |
 | 3 | Purge private details from git history | The repo is public. Commit `dfe1690` removed the chat transcripts and benchmark logs (now in ignored `docs/temp/`) and redacted names, portal, and item IDs, but earlier commits still contain them. Backlog (agreed, repo stays public): squash history to one clean commit and force-push. |
-| 4 | ~~Vendor folder from config everywhere~~ (done) | `src/lib/vendor.mjs` reads `vendors[].root` from `.codebase-context/config.json` (default `ArcGISExperienceBuilder`). All indexers use it; outputs are unchanged apart from timestamps. Only `tests/golden-queries.mjs` still has fixed paths (item 5). |
-| 5 | Expected test results per vendor version | `tests/golden-queries.mjs` and `ai-index-coverage.test.mjs` expect ExB 1.20.0 paths, lines, and counts. Move them to `vendors/exb/tests/<version>/` and pick by the installed version. |
-| 6 | Trim the always-on instruction | `exb-source-authority` renders to about 11 KB and loads on every request. Move the recipe notes, Project structure, and External docs details into `exb-source-research`; keep the routing table, rules, recipes table, ExB summary, and source authority list (target 6-7 KB). |
+| 4 | ~~Vendor folder from config everywhere~~ (done) | Indexers read `vendors[].root`; tests now resolve versioned path placeholders too. |
+| 5 | ~~Expected test results per vendor version~~ (done) | Reviewed 1.20 identities, paths/lines, rankings, and coverage floors in `vendors/exb/tests/1.20.0/expectations.json`. Unknown versions fail explicitly. |
+| 6 | ~~Trim the always-on instruction~~ (done) | Detailed notes/structure/external docs moved to research skill; routing, recipes, architecture, source authority and explicit mandatory skill selection retained. Broad ExB/Jimu/UI/core/settings/layout/OOTB triggers tested. |
 | 7 | Index-history notes | Move the index history from cpe-exb repo memory (`/memories/repo/exb-runtime-patterns.md`) into `docs/`. |
-| 8 | MCP server (consider) | Expose `find`, facts, and guide-text search as MCP tools, so skills stop depending on a project's `npm run ai:find` script. See "Should ai:find live in a skill?" below. |
+| 8 | MCP server (deferred) | Not implemented. Proposed read-only stdio tools over a shared cached query engine; CLI remains fallback. Design, costs, and measured CLI baseline: `docs/mcp-design.md`. |
 | 9 | Phase 2 (deferred) | Move ExB folder paths, file patterns, and ignore rules out of the indexers into vendor settings. Do it when a second vendor arrives, so the settings are designed from two real cases. |
 
 ## Decisions
@@ -70,4 +70,4 @@ Skills refer to `npm run ai:find`, which only works if the project defines that 
 | --- | --- | --- |
 | Keep `find` in the engine; skills cite one command (current) | One implementation; skills stay text | Each project must define the `ai:find` script; `verify` should check it |
 | Copy a `find` script into a skill's `scripts/` folder | Self-contained skill | `find` needs the engine, its package, and the indexes, so the copy duplicates the engine; several skills use it, so it would be duplicated or one skill would depend on another |
-| MCP server exposing `find`, facts, and guide search (to do #6) | No shell or npm script needed; works in any project; agents call it like codebase-memory | New server to build and run; another tool to load |
+| MCP server exposing `find`, facts, and guide search (deferred item 8) | No shell or npm script needed; works in any project; agents call it like codebase-memory | New server to build and run; another tool to load |

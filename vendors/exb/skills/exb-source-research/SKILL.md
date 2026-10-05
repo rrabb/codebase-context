@@ -1,12 +1,14 @@
 ---
 name: exb-source-research
-description: "Step-by-step workflow for researching the installed ArcGIS Experience Builder (ExB) vendor source when the always-on Tool routing table is not enough. USE WHEN: a question needs several searches across the ExB vendor tree (client/jimu-*, client/types, client/dist/widgets, sdk-resources, minified client/dist bundles); deciding which .ai-context/exb index or table to grep (api/, api-usage/, docs/, docs-text/, facts/, dist-widgets/, dist-widgets-ts/, symbols.tsv, reexports.tsv, mentions.tsv, CLIENT-RUNTIME-MAP.md); judging whether a vendor pattern is safe to copy (public vs Esri-internal, source vs minified); or making a coverage claim about the vendor tree."
+description: "USE WHEN answering questions, explaining, implementing, debugging, or reviewing anything related to ArcGIS Experience Builder (ExB), Jimu, widget development, runtime or settings, framework architecture, app/widget config, layouts, pages, sections, views, jimu-core, jimu-ui, settings components, managers, data sources, SDK samples, or out-of-the-box widgets (OOTB / OTB). Load even for a single API lookup or conceptual question. Covers local source authority, tool routing, vendor-safe patterns, .ai-context/exb indexes, installed guide text, usage coverage, and minified-runtime fallback."
 license: Internal
 ---
 
 # ExB source research workflow
 
 The always-on `exb-source-authority` instruction holds the Tool routing table, Question recipes, and source authority order. This skill holds the longer workflow behind them.
+
+For architecture/layouts/app lifecycle, also load `experience-builder-architecture`; for widget implementation/review, `exb-widget-development`; for core/framework APIs, `jimu-framework-apis`; for UI/settings components, `jimu-ui-components`. Paths in these skills use the default vendor folder as examples: resolve `vendors[].root` in `.codebase-context/config.json` before opening them. The reference material is grounded in ExB 1.20; verify release-sensitive details against the installed version rather than assuming another release matches.
 
 ## Search workflow (the semantic index does not cover the vendor tree)
 
@@ -30,6 +32,27 @@ Do not claim to have searched the whole vendor tree unless an index or processin
 When no close local match exists, do not force a poor fit or invent an API: escalate to official Esri sources (ExB Developer Guide and API Reference, ArcGIS Maps SDK for JavaScript samples and reference, Calcite docs, jimu-ui Storybook, the ExB sdk-resources GitHub repo), cite what you used, and mark unverified APIs `⚠️ NOT VERIFIED IN LOCAL EXB SOURCES`.
 
 ## Search scope
+
+The graph does not record enum or property reads. For `ai:find -- <term> --in <scope>`, scope can be a widget, group, or folder; results cover parsed source, so finish usage questions with scoped grep. Anchor direct table searches on the identity column, for example `^jimu-core::DataSourceStatus\.NotReady\t.*common/list`. Never grep a bare common word across multi-MB `api-usage/` tables or the entire vendor tree.
+
+## Project structure and external docs
+
+| Location | Purpose |
+| --- | --- |
+| `src/` | Project-owned widgets, components, tests, utilities |
+| Configured `vendors[].root` (usually `ArcGISExperienceBuilder/`) | Read-only vendor source; adapt patterns into `src/` and cite the original |
+| `.ai-context/exb/` | Generated indexes; `REPOSITORY-MAP.md` routes tables; rebuild with `npm run ai:refresh` |
+| `tools/codebase-context/` | Index tool; project settings in `.codebase-context/` |
+| `.github/skills/` | Architecture, source research, widget development, framework APIs, UI skills |
+
+| Topic | Documentation order |
+| --- | --- |
+| ExB/Jimu/widgets | Local declarations, SDK/OOTB sources, `ai:find`, graph, scoped grep. Context7 only for missing/thin/contradictory evidence or a newer release |
+| JSAPI/Calcite | Exact signatures from installed `client/node_modules` declarations, then Context7, then `ps-codex-mcp` Esri samples/skills |
+
+For mixed questions, apply each route separately. If `ps-codex-mcp` is unreachable, say so and continue. Installed JSAPI/Calcite versions appear in `.ai-context/exb/REPOSITORY-MAP.md`.
+
+## Vendor search priorities
 
 | Priority | Folders |
 | --- | --- |
