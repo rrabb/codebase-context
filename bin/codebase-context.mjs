@@ -19,6 +19,7 @@ const commands = {
   verify: { script: 'src/ai-verify.mjs', about: 'Check index version and coverage' },
   refresh: { script: 'src/ai-refresh.mjs', about: 'Graphs, then index, then knowledge (--graph-only | --no-graph)' },
   'combine-dts': { script: 'src/combine-dts.mjs', about: 'Combine a folder of .d.ts files into one file' },
+  install: { script: 'src/install.mjs', about: 'Link skills and write instructions and prompts into .github (--dry-run, --force)' },
   test: { about: 'Run the tool tests against the project' }
 };
 

@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
-import { PROJECT_ROOT, TOOL_ROOT } from './lib/project-root.mjs';
+import { PROJECT_ROOT, TOOL_ROOT, graphName as projectNameFor } from './lib/project-root.mjs';
 
 const ROOT = PROJECT_ROOT;
 const VENDOR = path.join(ROOT, 'ArcGISExperienceBuilder');
@@ -19,9 +19,6 @@ const CBMIGNORE = path.join(TOOL_ROOT, 'vendors', 'exb', 'exb.cbmignore');
 const args = new Set(process.argv.slice(2));
 const graphOnly = args.has('--graph-only');
 const noGraph = args.has('--no-graph');
-
-// codebase-memory derives a project name from its root path ("C:/a/b" -> "C-a-b").
-const projectNameFor = (dir) => dir.replace(/\\/g, '/').replace(/:/g, '').replace(/\//g, '-');
 
 // codebase-memory skips any folder named "dist", so OOTB widget source must be its own project root.
 const GRAPHS = [
