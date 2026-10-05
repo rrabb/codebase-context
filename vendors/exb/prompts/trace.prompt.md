@@ -10,7 +10,7 @@ agent: agent
 Follow these steps in order. Do not start with grep or file reads.
 
 1. **Load tools.** Load codebase-memory with `tool_search` ("codebase-memory"). Read the Tool routing table in `.github/instructions/exb-source-authority.instructions.md` to pick graph projects.
-2. **Project code.** In project `C-_DATA-PROJECTS-NGA-CPE-topo-cpe-git-topo-CPE-WebApps-cpe-exb`, run `search_graph` for the entry symbols, then `trace_path` (direction `both`), then `get_code_snippet` for each symbol you will cite.
+2. **Project code.** In project `{{PROJECT_GRAPH}}`, run `search_graph` for the entry symbols, then `trace_path` (direction `both`), then `get_code_snippet` for each symbol you will cite.
 3. **ExB APIs.** For each framework class the trace reaches, run `npm run ai:find -- <Owner> --members` (or a bare member name). Note the declaration, docs, and 2-3 SDK/OOTB usages.
 4. **Framework and OOTB structure.** Trace into the `...-cpe-exb-ArcGISExperienceBuilder` graph (jimu `.d.ts`, `sdk-resources`) and the `...-cpe-exb-ootb-widgets` graph (`client/dist/widgets/**/src`) as needed.
 5. **Coverage.** Call `check_index_coverage` once per graph project with every path you will cite. Read source for any partial, excluded, or stale range.

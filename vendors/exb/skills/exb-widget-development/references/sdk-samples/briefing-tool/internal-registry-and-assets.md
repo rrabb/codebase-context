@@ -2,7 +2,7 @@
 
 ## What this is + version flag
 
-The `briefing-tool` is the richest widget in the local SDK samples (`ArcGISExperienceBuilder/sdk-resources/widgets/briefing-tool/`): a multi-step wizard for building a briefing map print-out. Its `manifest.json` declares `"version": "1.17.0"` and `"exbVersion": "1.17.0"`, and it was authored outside the Esri R&D sample pipeline (manifest `author` "Esri Joey Harig", `package.json` `author` "reim5052"). Do NOT copy it verbatim; the repo SDK targets a newer ExB, so validate every jimu/ArcGIS API against 1.20 before lifting. For the higher-level architecture/wizard/context/print walkthrough, see the summary card in [09-demos-complex.md](../09-demos-complex.md); this file only covers the reusable internal-registry + web-component + asset-path integration patterns.
+The `briefing-tool` is the richest widget in the local SDK samples (`ArcGISExperienceBuilder/sdk-resources/widgets/briefing-tool/`): a multi-step wizard for building a briefing map print-out. Its `manifest.json` declares `"version": "1.17.0"` and `"exbVersion": "1.17.0"`, and it was authored outside the Esri R&D sample pipeline (manifest `author` "Esri Joey Harig", `package.json` `author` is a local developer account). Do NOT copy it verbatim; the repo SDK targets a newer ExB, so validate every jimu/ArcGIS API against 1.20 before lifting. For the higher-level architecture/wizard/context/print walkthrough, see the summary card in [09-demos-complex.md](../09-demos-complex.md); this file only covers the reusable internal-registry + web-component + asset-path integration patterns.
 
 ## 1. Integrating packages from an internal-only Esri repo
 

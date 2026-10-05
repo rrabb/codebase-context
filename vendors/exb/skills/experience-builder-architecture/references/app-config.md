@@ -103,7 +103,7 @@ Consequences:
 
 | Key | Example from app 5 | Notes |
 | --- | --- | --- |
-| `dataSources.<id>` | `{ id: "dataSource_1", type: "WEB_MAP", itemId: "67b26b86...", portalUrl: "https://nga.maps.arcgis.com" }` | Layers inside a web map get derived IDs such as `dataSource_1-19faef3393f-layer-43`; widgets reference them through `useDataSources` with `rootDataSourceId: "dataSource_1"`. Guide: `guide/core-concepts/data-source/`. |
+| `dataSources.<id>` | `{ id: "dataSource_1", type: "WEB_MAP", itemId: "<web map item id>", portalUrl: "https://<org>.maps.arcgis.com" }` | Layers inside a web map get derived IDs such as `dataSource_1-19faef3393f-layer-43`; widgets reference them through `useDataSources` with `rootDataSourceId: "dataSource_1"`. Guide: `guide/core-concepts/data-source/`. |
 | `messageConfigs.<id>` | `{ widgetId: "widget_2", messageType: "VIEW_CHANGE", actions: [{ widgetId: "widget_1", actionName: "openSidebar", ... }] }` | The publishing widget must list the message in `manifest.json` `publishMessages`; the target widget declares `messageActions`. Guide: `guide/core-concepts/message-action/`. |
 | `widgets.<id>.dataActions`, `enableDataAction` | Per-widget data action settings | Guide: `guide/core-concepts/data-action/`. |
 
