@@ -9,6 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { PROJECT_ROOT } from './lib/project-root.mjs';
+import { VENDOR_ROOT } from './lib/vendor.mjs';
 
 const ROOT = PROJECT_ROOT;
 const INDEX_ROOT = path.join(ROOT, '.ai-context', 'exb');
@@ -70,7 +71,7 @@ async function main () {
   }
 
   const metadata = Object.fromEntries((await loadTsv('api/METADATA.tsv')).map((row) => [row.key, row.value]));
-  const version = JSON.parse(await fs.readFile(path.join(ROOT, 'ArcGISExperienceBuilder', 'version.json'), 'utf8'));
+  const version = JSON.parse(await fs.readFile(path.join(VENDOR_ROOT, 'version.json'), 'utf8'));
   if (metadata.exb_version !== version.exbVersion) {
     problems.push(`catalog exb_version ${metadata.exb_version} != installed ${version.exbVersion} (regenerate: npm run ai:index:rich)`);
   } else {

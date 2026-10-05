@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { addUsage, catalogRows, manifestRow, usageRows } from './lib/widget-catalog.mjs';
 
 import { PROJECT_ROOT } from './lib/project-root.mjs';
+import { VENDOR_DIR, VENDOR_ROOT } from './lib/vendor.mjs';
 
 const ROOT = PROJECT_ROOT;
 const OUT_DIR = path.join(ROOT, '.ai-context', 'exb');
@@ -36,7 +37,7 @@ const PRESERVED_OUTPUTS = new Set([
   'reports',
 ]);
 
-const CLIENT = 'ArcGISExperienceBuilder/client';
+const CLIENT = `${VENDOR_DIR}/client`;
 
 // mentions index: an API name is a useful "mention" signal only when it is named in a
 // handful of files. Names that appear in many files are generic (Config/Props/View) and
@@ -58,7 +59,7 @@ const AREAS = [
   { name: 'jimu-theme', dir: `${CLIENT}/jimu-theme`, symbols: true },
   { name: 'jimu-ui', dir: `${CLIENT}/jimu-ui`, symbols: true },
   { name: 'client-types', dir: `${CLIENT}/types`, symbols: true },
-  { name: 'sdk-resources', dir: 'ArcGISExperienceBuilder/sdk-resources', symbols: true },
+  { name: 'sdk-resources', dir: `${VENDOR_DIR}/sdk-resources`, symbols: true },
   // dist/widgets ships readable .ts/.tsx source per widget: index it in detail.
   { name: 'dist-widgets', dir: `${CLIENT}/dist/widgets`, detailed: true, manifests: true },
 ];
@@ -820,7 +821,7 @@ async function readJsonSafe (p) {
 
 async function writeRepoMap (stats, symTotal, reexTotal) {
   const dirByName = Object.fromEntries(AREAS.map((a) => [a.name, a.dir]));
-  const ver = await readJsonSafe(path.join(ROOT, 'ArcGISExperienceBuilder', 'version.json'));
+  const ver = await readJsonSafe(path.join(VENDOR_ROOT, 'version.json'));
   const exbVersion = (ver && (ver.version || ver.exbVersion)) || 'unknown';
   const core = await readJsonSafe(path.join(ROOT, CLIENT, 'node_modules', '@arcgis', 'core', 'package.json'));
   const sdkVersion = (core && core.version) || '5.0.x';
@@ -841,11 +842,11 @@ indexes in this folder; see also [README.md](README.md).
 
 Grep-first map of the authoritative (gitignored) ExB / jimu vendor source so an AI agent can
 navigate ~275 MB without a semantic index. Indexes are TSV (one fact per line - GREP them, do
-not read whole files). \`ArcGISExperienceBuilder/\` is READ-ONLY; adapt patterns into \`src/\`.
+not read whole files). \`${VENDOR_DIR}/\` is READ-ONLY; adapt patterns into \`src/\`.
 
 ## Framework metadata
 
-- Source root: \`ArcGISExperienceBuilder/\`
+- Source root: \`${VENDOR_DIR}/\`
 - ExB version: **${exbVersion}**
 - ArcGIS Maps SDK for JavaScript: **${sdkVersion}** (Calcite 5.0.x, React 19, Node 24)
 - Index generated: ${now}
@@ -929,7 +930,7 @@ implementation behavior, but are not canonical API usage or supported-custom-wid
   and \`client/types/\` are primarily \`.d.ts\` declarations. \`jimu-core/lib/\` has one readable
   implementation file, \`set-public-path.ts\`; \`jimu-for-test\` also ships a readable \`index.tsx\`.
   Read their JSDoc for intent. HTML API reference and Storybook metadata are outside \`client/\` under
-  \`ArcGISExperienceBuilder/exb-api-ref-docs/\` and indexed under \`.ai-context/exb/docs/\`.
+  \`${VENDOR_DIR}/exb-api-ref-docs/\` and indexed under \`.ai-context/exb/docs/\`.
 2. **Readable OOTB source** - \`client/dist/widgets/<group>/<widget>/src/\` contains the primary
   production precedent in \`.ts/.tsx\`. Major groups include \`arcgis/\` (28 widgets), \`common/\`
   (24), \`layout/\`, \`lrs/\`, \`geobim/\`, \`ba-infographic/\`, \`survey123/\`, and \`shared-code/\`.
@@ -952,18 +953,18 @@ implementation behavior, but are not canonical API usage or supported-custom-wid
 
 | Need | First bundle to inspect |
 |---|---|
-| App actions, Redux reducers, store, managers, messages, sessions, mutable store | \`ArcGISExperienceBuilder/client/dist/jimu-core/index.js\` |
-| \`JimuMapView\`, \`MapViewManager\`, \`JimuLayerView\`, map bridge behavior | \`ArcGISExperienceBuilder/client/dist/jimu-arcgis/index.js\` |
-| Data-source implementation behavior | \`ArcGISExperienceBuilder/client/dist/jimu-data-source/index.js\` |
-| Settings and builder APIs | \`ArcGISExperienceBuilder/client/dist/jimu-for-builder/index.js\` or its matching subpath bundle: \`service.js\`, \`guides.js\`, \`templates.js\`, \`json-editor-setting.js\` |
-| Layout runtime or builder behavior | \`ArcGISExperienceBuilder/client/dist/jimu-layouts/layout-runtime.js\` or \`layout-builder.js\` |
-| Theme behavior | \`ArcGISExperienceBuilder/client/dist/jimu-theme/index.js\` |
-| Core jimu-ui component behavior | \`ArcGISExperienceBuilder/client/dist/jimu-ui/index.js\` |
-| \`jimu-ui/advanced/<name>\` | \`ArcGISExperienceBuilder/client/dist/jimu-ui/advanced/<name>.js\` |
-| \`jimu-ui/basic/<name>\` | \`ArcGISExperienceBuilder/client/dist/jimu-ui/basic/<name>.js\` |
-| Builder application shell | \`ArcGISExperienceBuilder/client/dist/builder/index.js\` |
-| Published experience shell | \`ArcGISExperienceBuilder/client/dist/experience/index.js\` |
-| One shipped widget after its adjacent \`src/\` does not explain behavior | \`ArcGISExperienceBuilder/client/dist/widgets/<group>/<widget>/dist/runtime/widget.js\`, \`setting/setting.js\`, or \`runtime/builder-support.js\` |
+| App actions, Redux reducers, store, managers, messages, sessions, mutable store | \`${VENDOR_DIR}/client/dist/jimu-core/index.js\` |
+| \`JimuMapView\`, \`MapViewManager\`, \`JimuLayerView\`, map bridge behavior | \`${VENDOR_DIR}/client/dist/jimu-arcgis/index.js\` |
+| Data-source implementation behavior | \`${VENDOR_DIR}/client/dist/jimu-data-source/index.js\` |
+| Settings and builder APIs | \`${VENDOR_DIR}/client/dist/jimu-for-builder/index.js\` or its matching subpath bundle: \`service.js\`, \`guides.js\`, \`templates.js\`, \`json-editor-setting.js\` |
+| Layout runtime or builder behavior | \`${VENDOR_DIR}/client/dist/jimu-layouts/layout-runtime.js\` or \`layout-builder.js\` |
+| Theme behavior | \`${VENDOR_DIR}/client/dist/jimu-theme/index.js\` |
+| Core jimu-ui component behavior | \`${VENDOR_DIR}/client/dist/jimu-ui/index.js\` |
+| \`jimu-ui/advanced/<name>\` | \`${VENDOR_DIR}/client/dist/jimu-ui/advanced/<name>.js\` |
+| \`jimu-ui/basic/<name>\` | \`${VENDOR_DIR}/client/dist/jimu-ui/basic/<name>.js\` |
+| Builder application shell | \`${VENDOR_DIR}/client/dist/builder/index.js\` |
+| Published experience shell | \`${VENDOR_DIR}/client/dist/experience/index.js\` |
+| One shipped widget after its adjacent \`src/\` does not explain behavior | \`${VENDOR_DIR}/client/dist/widgets/<group>/<widget>/dist/runtime/widget.js\`, \`setting/setting.js\`, or \`runtime/builder-support.js\` |
 
 ## Exclusions
 
@@ -990,7 +991,7 @@ Generated by codebase-context (\`src/build-ai-index.mjs\`) on ${new Date().toISO
 Do NOT hand-edit. Regenerate with: \`npm run ai:index\`.
 
 Compact, grep-friendly index of the authoritative ExB / jimu sources (gitignored
-under \`ArcGISExperienceBuilder/\`) so an AI agent can locate symbols and files on
+under \`${VENDOR_DIR}/\`) so an AI agent can locate symbols and files on
 demand without scanning ~275 MB of vendor code. Binary/asset files (images, fonts,
 media, archives, sourcemaps) and localization files (i18n / t9n / nls / translations
 / help) are excluded everywhere.
@@ -1037,7 +1038,7 @@ async function writeDistReadme (dist) {
   const md = `# dist-widgets detailed index (generated)
 
 Detailed, grep-friendly indexes extracted from the readable \`.ts/.tsx\` source of
-every OOTB widget under \`ArcGISExperienceBuilder/client/dist/widgets\`. Do NOT
+every OOTB widget under \`${VENDOR_DIR}/client/dist/widgets\`. Do NOT
 hand-edit. Regenerate with \`npm run ai:index\`.
 
 Every row carries \`group\` (arcgis|common|layout|...) and \`widget\` columns so you

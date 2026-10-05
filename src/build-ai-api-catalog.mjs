@@ -5,6 +5,8 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { Node, SyntaxKind } from 'ts-morph';
 
+import { VENDOR_DIR, VENDOR_RE } from './lib/vendor.mjs';
+
 const PACKAGE_NAMES = [
   'jimu-arcgis',
   'jimu-core',
@@ -47,11 +49,11 @@ function repoRelative (root, filePath) {
 
 function packageInfo (root, sourceFile) {
   const relative = repoRelative(root, sourceFile.getFilePath());
-  const match = /^ArcGISExperienceBuilder\/client\/(jimu-[^/]+)\/(.+)$/.exec(relative);
+  const match = new RegExp(`^${VENDOR_RE}/client/(jimu-[^/]+)/(.+)$`).exec(relative);
   if (match && PACKAGE_NAMES.includes(match[1])) {
     return { packageName: match[1], packageRelative: match[2], relative };
   }
-  const typeMatch = /^ArcGISExperienceBuilder\/client\/types\/(arcgis-(?:js-api-adaptor|map-components)\.d\.ts)$/.exec(relative);
+  const typeMatch = new RegExp(`^${VENDOR_RE}/client/types/(arcgis-(?:js-api-adaptor|map-components)\\.d\\.ts)$`).exec(relative);
   if (typeMatch) {
     return { packageName: 'client-types', packageRelative: typeMatch[1], relative };
   }
@@ -60,15 +62,15 @@ function packageInfo (root, sourceFile) {
 
 export function apiCatalogGlobs () {
   const globs = PACKAGE_NAMES.flatMap((packageName) => [
-    `ArcGISExperienceBuilder/client/${packageName}/**/*.ts`,
-    `ArcGISExperienceBuilder/client/${packageName}/**/*.tsx`,
+    `${VENDOR_DIR}/client/${packageName}/**/*.ts`,
+    `${VENDOR_DIR}/client/${packageName}/**/*.tsx`,
   ]);
   globs.push(
-    'ArcGISExperienceBuilder/client/types/arcgis-js-api-adaptor.d.ts',
-    'ArcGISExperienceBuilder/client/types/arcgis-map-components.d.ts',
-    '!ArcGISExperienceBuilder/client/jimu-icons/**',
-    '!ArcGISExperienceBuilder/client/jimu-*/**/{node_modules,test,tests,__tests__,i18n,t9n,nls,translations,locales,chunks,chunk}/**',
-    '!ArcGISExperienceBuilder/client/jimu-*/**/*.{i18n,t9n}.*',
+    `${VENDOR_DIR}/client/types/arcgis-js-api-adaptor.d.ts`,
+    `${VENDOR_DIR}/client/types/arcgis-map-components.d.ts`,
+    `!${VENDOR_DIR}/client/jimu-icons/**`,
+    `!${VENDOR_DIR}/client/jimu-*/**/{node_modules,test,tests,__tests__,i18n,t9n,nls,translations,locales,chunks,chunk}/**`,
+    `!${VENDOR_DIR}/client/jimu-*/**/*.{i18n,t9n}.*`,
   );
   return globs;
 }
@@ -310,7 +312,7 @@ export async function buildCanonicalApiCatalog ({ root, project, sourceFiles, ou
   const [docRows, storyRows, exbVersionJson] = await Promise.all([
     readTsvOptional(path.join(docsDir, 'api-reference.tsv')),
     readTsvOptional(path.join(docsDir, 'storybook.tsv')),
-    fs.readFile(path.join(root, 'ArcGISExperienceBuilder', 'version.json'), 'utf8').then(JSON.parse),
+    fs.readFile(path.join(root, VENDOR_DIR, 'version.json'), 'utf8').then(JSON.parse),
   ]);
   const docsIds = new Set(docRows.map((row) => row.api_id).filter(Boolean));
   const storybookIds = new Set(storyRows.map((row) => row.api_id).filter(Boolean));
@@ -605,7 +607,7 @@ export async function buildCanonicalApiCatalog ({ root, project, sourceFiles, ou
       ['docs_version', docRows[0]?.doc_version ?? 'not-generated'],
       ['storybook_version', storyRows[0]?.doc_version ?? 'not-generated'],
       ['generated_at', new Date().toISOString()],
-      ['source_roots', 'ArcGISExperienceBuilder/client/jimu-*;ArcGISExperienceBuilder/client/types'],
+      ['source_roots', `${VENDOR_DIR}/client/jimu-*;${VENDOR_DIR}/client/types`],
       ['exclusion_policy_version', EXCLUSION_POLICY_VERSION],
       ['command', command],
       ['status', 'complete'],

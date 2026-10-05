@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { loadTsv, indexExists, INDEX_ROOT, ROOT } from './helpers.mjs';
+import { VENDOR_ROOT } from '../src/lib/vendor.mjs';
 
 const KNOWN_GOOD_API_IDS = [
   'jimu-core::WidgetManager.getInstance',
@@ -33,7 +34,7 @@ const PARITY_FILES = [
 test('canonical catalog is versioned to the installed ExB', async () => {
   const metadata = await loadTsv('api/METADATA.tsv');
   const map = Object.fromEntries(metadata.map((row) => [row.key, row.value]));
-  const version = JSON.parse(await fs.readFile(path.join(ROOT, 'ArcGISExperienceBuilder', 'version.json'), 'utf8'));
+  const version = JSON.parse(await fs.readFile(path.join(VENDOR_ROOT, 'version.json'), 'utf8'));
   assert.equal(map.exb_version, version.exbVersion, 'catalog exb_version drifted from version.json');
   assert.equal(map.status, 'complete', 'catalog build did not complete');
 });

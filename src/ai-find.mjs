@@ -8,6 +8,7 @@ import Fuse from 'fuse.js';
 import { expandConcepts, rankDocs } from './lib/semantic.mjs';
 
 import { PROJECT_ROOT } from './lib/project-root.mjs';
+import { VENDOR_DIR } from './lib/vendor.mjs';
 
 const ROOT = PROJECT_ROOT;
 const INDEX_ROOT = path.join(ROOT, '.ai-context', 'exb');
@@ -231,7 +232,7 @@ function formatLocation (row) {
 
 // Map a symbol's package/module path to its minified runtime bundle (see CLIENT-RUNTIME-MAP.md).
 function runtimeBundleFor (row) {
-  const base = 'ArcGISExperienceBuilder/client/dist';
+  const base = `${VENDOR_DIR}/client/dist`;
   const mod = String(row?.module_path || row?.package || '');
   if (!mod) return null;
   if (mod.startsWith('jimu-ui/advanced/')) return `${base}/jimu-ui/advanced/${mod.split('/')[2]}.js`;
@@ -270,7 +271,7 @@ function printEscalation (escalation) {
     for (const m of escalation.mentions) console.log(`       ${m.path}:${m.line}  [${m.kind}${m.group ? ` ${m.group}/${m.widget}` : ''}]`);
   } else {
     console.log('  1) Grep readable source text incl. comments:');
-    console.log(`       grep -rin "${escalation.query}" ArcGISExperienceBuilder/client/dist/widgets ArcGISExperienceBuilder/sdk-resources`);
+    console.log(`       grep -rin "${escalation.query}" ${VENDOR_DIR}/client/dist/widgets ${VENDOR_DIR}/sdk-resources`);
   }
   console.log('  2) Trace the runtime bundle (see .ai-context/exb/CLIENT-RUNTIME-MAP.md):');
   console.log(`       ${escalation.bundle || 'select the bundle for this API package from CLIENT-RUNTIME-MAP.md'}`);

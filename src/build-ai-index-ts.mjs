@@ -19,13 +19,14 @@ import { apiCatalogGlobs, buildCanonicalApiCatalog, eligibleApiSourceFiles } fro
 import { addUsage, catalogRows, manifestRow, usageRows } from './lib/widget-catalog.mjs';
 
 import { PROJECT_ROOT } from './lib/project-root.mjs';
+import { VENDOR_DIR, VENDOR_ROOT } from './lib/vendor.mjs';
 
 const ROOT = PROJECT_ROOT;
 const OUT_DIR = path.join(ROOT, '.ai-context', 'exb', 'dist-widgets-ts');
 const API_OUT_DIR = path.join(ROOT, '.ai-context', 'exb', 'api');
-const TSCONFIG = path.join(ROOT, 'ArcGISExperienceBuilder', 'client', 'tsconfig.json');
-const WIDGETS_ABS = path.join(ROOT, 'ArcGISExperienceBuilder', 'client', 'dist', 'widgets');
-const WIDGETS_GLOB = 'ArcGISExperienceBuilder/client/dist/widgets';
+const TSCONFIG = path.join(VENDOR_ROOT, 'client', 'tsconfig.json');
+const WIDGETS_ABS = path.join(VENDOR_ROOT, 'client', 'dist', 'widgets');
+const WIDGETS_GLOB = `${VENDOR_DIR}/client/dist/widgets`;
 
 const BINARY_EXT = new Set(['.svg', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.map']);
 const PASCAL_RE = /^[A-Z][A-Za-z0-9]*$/;

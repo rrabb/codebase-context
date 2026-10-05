@@ -10,9 +10,10 @@ import { copyFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
 import { PROJECT_ROOT, TOOL_ROOT, graphName as projectNameFor } from './lib/project-root.mjs';
+import { VENDOR_ROOT } from './lib/vendor.mjs';
 
 const ROOT = PROJECT_ROOT;
-const VENDOR = path.join(ROOT, 'ArcGISExperienceBuilder');
+const VENDOR = VENDOR_ROOT;
 const OOTB_WIDGETS = path.join(VENDOR, 'client', 'dist', 'widgets');
 const CBMIGNORE = path.join(TOOL_ROOT, 'vendors', 'exb', 'exb.cbmignore');
 

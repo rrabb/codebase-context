@@ -7,9 +7,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { PROJECT_ROOT } from './lib/project-root.mjs';
+import { VENDOR_DIR, VENDOR_ROOT } from './lib/vendor.mjs';
 
 const ROOT = PROJECT_ROOT;
-const EXB_ROOT = path.join(ROOT, 'ArcGISExperienceBuilder');
+const EXB_ROOT = VENDOR_ROOT;
 const DOC_ROOT = path.join(EXB_ROOT, 'exb-api-ref-docs', 'experience-builder');
 const OUT_DIR = path.join(ROOT, '.ai-context', 'exb', 'docs');
 const SITE_PREFIX = '/experience-builder/';
@@ -375,7 +376,7 @@ async function buildStorybook (storybookIndex, storybookProject) {
       entry.importPath ?? '',
       entry.componentPath ?? '',
       docVersion,
-      `ArcGISExperienceBuilder/exb-api-ref-docs/experience-builder/storybook/index.html?path=/${routeType}/${entry.id}`,
+      `${VENDOR_DIR}/exb-api-ref-docs/experience-builder/storybook/index.html?path=/${routeType}/${entry.id}`,
       `${CANONICAL_ORIGIN}${SITE_PREFIX}storybook/?path=/${routeType}/${entry.id}`,
     ]);
   }

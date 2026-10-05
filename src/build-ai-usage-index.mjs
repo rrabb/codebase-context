@@ -10,9 +10,10 @@ import { Node, Project, SyntaxKind } from 'ts-morph';
 import { apiCatalogGlobs } from './build-ai-api-catalog.mjs';
 
 import { PROJECT_ROOT } from './lib/project-root.mjs';
+import { VENDOR_DIR, VENDOR_RE, VENDOR_ROOT } from './lib/vendor.mjs';
 
 const ROOT = PROJECT_ROOT;
-const CLIENT_ROOT = path.join(ROOT, 'ArcGISExperienceBuilder', 'client');
+const CLIENT_ROOT = path.join(VENDOR_ROOT, 'client');
 const TSCONFIG = path.join(CLIENT_ROOT, 'tsconfig.json');
 const INDEX_ROOT = path.join(ROOT, '.ai-context', 'exb');
 const API_DIR = path.join(INDEX_ROOT, 'api');
@@ -68,11 +69,11 @@ async function readTsv (filePath) {
 }
 
 function sourceContext (relative) {
-  let match = /^ArcGISExperienceBuilder\/client\/dist\/widgets\/([^/]+)\/([^/]+)/.exec(relative);
+  let match = new RegExp(`^${VENDOR_RE}/client/dist/widgets/([^/]+)/([^/]+)`).exec(relative);
   if (match) return { sourceRoot: 'ootb-widget', sourceKind: 'ootb-widget', owner: `${match[1]}/${match[2]}` };
-  match = /^ArcGISExperienceBuilder\/sdk-resources\/widgets\/(.+?)(?:\/src\/|\/tests?\/|\/manifest\.json|$)/.exec(relative);
+  match = new RegExp(`^${VENDOR_RE}/sdk-resources/widgets/(.+?)(?:/src/|/tests?/|/manifest\\.json|$)`).exec(relative);
   if (match) return { sourceRoot: 'sdk-sample', sourceKind: 'sdk-sample', owner: match[1] };
-  match = /^ArcGISExperienceBuilder\/client\/(jimu-[^/]+)\/(.*)$/.exec(relative);
+  match = new RegExp(`^${VENDOR_RE}/client/(jimu-[^/]+)/(.*)$`).exec(relative);
   if (match) {
     const isTest = /(?:^|\/)(?:tests?|__tests__)(?:\/|$)|\.test\.[jt]sx?$|\.spec\.[jt]sx?$/i.test(match[2]);
     return {
@@ -474,7 +475,7 @@ async function buildAuditLedger (files, canonicalRows, unresolved, pilotGroup) {
   const excludedCounts = new Map();
   const roots = pilotGroup
     ? [path.join(CLIENT_ROOT, 'dist', 'widgets', pilotGroup)]
-    : [path.join(CLIENT_ROOT, 'dist', 'widgets'), path.join(ROOT, 'ArcGISExperienceBuilder', 'sdk-resources')];
+    : [path.join(CLIENT_ROOT, 'dist', 'widgets'), path.join(VENDOR_ROOT, 'sdk-resources')];
   const jimuEntries = await fs.readdir(CLIENT_ROOT, { withFileTypes: true });
   roots.push(...jimuEntries.filter((entry) => entry.isDirectory() && entry.name.startsWith('jimu-')).map((entry) => path.join(CLIENT_ROOT, entry.name)));
   let errors = 0;
@@ -539,12 +540,12 @@ async function main () {
   const project = new Project({ tsConfigFilePath: TSCONFIG, skipAddingFilesFromTsConfig: true });
   project.addSourceFilesAtPaths(apiCatalogGlobs());
   const usageGlobs = pilotGroup
-    ? [`ArcGISExperienceBuilder/client/dist/widgets/${pilotGroup}/**/*.ts`, `ArcGISExperienceBuilder/client/dist/widgets/${pilotGroup}/**/*.tsx`]
+    ? [`${VENDOR_DIR}/client/dist/widgets/${pilotGroup}/**/*.ts`, `${VENDOR_DIR}/client/dist/widgets/${pilotGroup}/**/*.tsx`]
     : [
-        'ArcGISExperienceBuilder/client/dist/widgets/**/*.{ts,tsx}',
-        'ArcGISExperienceBuilder/sdk-resources/**/*.{ts,tsx,js,jsx}',
-        'ArcGISExperienceBuilder/client/jimu-*/**/*.{ts,tsx}',
-        '!ArcGISExperienceBuilder/client/jimu-icons/**',
+      `${VENDOR_DIR}/client/dist/widgets/**/*.{ts,tsx}`,
+      `${VENDOR_DIR}/sdk-resources/**/*.{ts,tsx,js,jsx}`,
+      `${VENDOR_DIR}/client/jimu-*/**/*.{ts,tsx}`,
+      `!${VENDOR_DIR}/client/jimu-icons/**`,
       ];
   const added = project.addSourceFilesAtPaths([
     ...usageGlobs,
