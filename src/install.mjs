@@ -128,6 +128,13 @@ if (!existsSync(configPath)) {
 const config = readJson(configPath);
 const githubDir = path.join(PROJECT_ROOT, '.github');
 
+// Backups are local safety copies, never project content.
+const ignorePath = path.join(PROJECT_ROOT, '.codebase-context', '.gitignore');
+if (!dryRun && !(existsSync(ignorePath) && readFileSync(ignorePath, 'utf8').split(/\r?\n/).includes('backup/'))) {
+  writeFileSync(ignorePath, (existsSync(ignorePath) ? readFileSync(ignorePath, 'utf8').replace(/\s*$/, '\n') : '') + 'backup/\n');
+  log.push(`write   ${rel(ignorePath)} (ignores backup/)`);
+}
+
 for (const vendor of config.vendors) {
   const packageDir = vendor.package ? path.resolve(PROJECT_ROOT, vendor.package) : path.join(TOOL_ROOT, 'vendors', vendor.id);
   const pkg = readJson(path.join(packageDir, 'vendor.json'));
