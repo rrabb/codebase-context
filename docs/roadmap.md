@@ -8,14 +8,19 @@ Working notes for codebase-context: open work, decisions with their reasons, and
 | --- | --- | --- |
 | 1 | Remove the install backup in cpe-exb | `cpe-exb/.codebase-context/backup/2026-10-05T20-52-37-288Z/` holds the skills and instructions replaced by the first `install --force`. Delete once the linked skills are confirmed in the chat customizations view. The folder is ignored by `.codebase-context/.gitignore`. |
 | 2 | Publish pre-built index bundles as GitHub Release assets | Add `pack` (zip `.ai-context/<vendor>` plus a version file, for example `exb-1.20.0-index.zip`) and `install --prebuilt <zip or URL>`. See "Packaging pre-built knowledge" below. |
-| 3 | `init --exb <path>` | Write `.codebase-context/config.json` with the ExB version detected. |
-| 4 | Setup checks in `verify` | Vendor folder and version, `tools/codebase-context` link, Node version, `codebase-memory-mcp`, `ai:*` scripts present in the project, generated files up to date with their templates. Then the existing index checks. |
-| 5 | Index-history notes | Move the index history from cpe-exb repo memory (`/memories/repo/exb-runtime-patterns.md`) into `docs/`. |
-| 6 | MCP server (consider) | Expose `find`, facts, and guide-text search as MCP tools, so skills stop depending on a project's `npm run ai:find` script. See "Should ai:find live in a skill?" below. |
-| 7 | Phase 2 (deferred) | Move ExB folder paths, file patterns, and ignore rules out of the indexers into vendor settings. Do it when a second vendor arrives, so the settings are designed from two real cases. |
+| 3 | Purge private details from git history | The repo is public. Commit `dfe1690` removed the chat transcripts and benchmark logs (now in ignored `docs/temp/`) and redacted names, portal, and item IDs, but earlier commits still contain them. Either make the repo private, or squash history to one clean commit and force-push. |
+| 4 | Vendor folder from config everywhere | The indexers and tests still hard-code `ArcGISExperienceBuilder` (about 60 places in `src/`, 5 in `tests/`). Read `vendors[].root` instead, so a project can keep ExB under another name. Small part of phase 2. |
+| 5 | Expected test results per vendor version | `tests/golden-queries.mjs` and `ai-index-coverage.test.mjs` expect ExB 1.20.0 paths, lines, and counts. Move them to `vendors/exb/tests/<version>/` and pick by the installed version. |
+| 6 | Trim the always-on instruction | `exb-source-authority` renders to about 11 KB and loads on every request. Move the recipe notes, Project structure, and External docs details into `exb-source-research`; keep the routing table, rules, recipes table, ExB summary, and source authority list (target 6-7 KB). |
+| 7 | Index-history notes | Move the index history from cpe-exb repo memory (`/memories/repo/exb-runtime-patterns.md`) into `docs/`. |
+| 8 | MCP server (consider) | Expose `find`, facts, and guide-text search as MCP tools, so skills stop depending on a project's `npm run ai:find` script. See "Should ai:find live in a skill?" below. |
+| 9 | Phase 2 (deferred) | Move ExB folder paths, file patterns, and ignore rules out of the indexers into vendor settings. Do it when a second vendor arrives, so the settings are designed from two real cases. |
 
 ## Decisions
 
+| 2026-10-05 | `init` and setup checks in `verify` added; `install` refuses to overwrite a generated file edited by hand (hash in `.codebase-context/installed.json`) unless `--force` | Hand edits to generated files were silently lost on the next install |
+| 2026-10-05 | Chat transcripts and benchmark logs stay out of git (`docs/temp/`, ignored) | The repo is public; they contain internal paths, user names, and URLs |
+| 2026-10-05 | Skill edits made in a project land in this repo (skills are junctions); `verify` warns about uncommitted changes here | One copy of each skill; fixes reach every project. Cost: edits are easy to forget to commit, and a half-finished edit affects every linked project at once. |
 | Date | Decision | Why |
 | --- | --- | --- |
 | 2026-10-05 | Skills are linked (junction) into projects; instructions and prompts are rendered copies with a "generated" header | VS Code finds skills through junctions (tested). Instructions contain project values (graph names), so they must be rendered per project. |
