@@ -16,7 +16,8 @@ const commands = {
   'index:usages': { script: 'src/build-ai-usage-index.mjs', node: BIG_HEAP, about: 'Compiler-resolved API usages' },
   knowledge: { script: 'src/knowledge/cli.mjs', defaultArgs: ['all'], about: 'Facts and docs-to-text (facts | docs | all)' },
   find: { script: 'src/ai-find.mjs', about: 'Look up an API, member, or capability' },
-  verify: { script: 'src/ai-verify.mjs', about: 'Check index version and coverage' },
+  verify: { scripts: ['src/verify-setup.mjs', 'src/ai-verify.mjs'], about: 'Check setup (vendor, link, Node, scripts, installed files), then index version and coverage' },
+  init: { script: 'src/init.mjs', about: 'Write .codebase-context/config.json (--exb <path> [--force])' },
   refresh: { script: 'src/ai-refresh.mjs', about: 'Graphs, then index, then knowledge (--graph-only | --no-graph)' },
   'combine-dts': { script: 'src/combine-dts.mjs', about: 'Combine a folder of .d.ts files into one file' },
   install: { script: 'src/install.mjs', about: 'Link skills and write instructions and prompts into .github (--dry-run, --force)' },
@@ -36,13 +37,19 @@ if (!command) {
   process.exit(name ? 2 : 0);
 }
 
+const run = (nodeArgs) => spawnSync(process.execPath, nodeArgs, {
+  cwd: project,
+  stdio: 'inherit',
+  env: { ...process.env, CODEBASE_CONTEXT_PROJECT: project }
+}).status ?? 1;
+
+if (command.scripts) {
+  const statuses = command.scripts.map((script) => run([path.join(TOOL_ROOT, script), ...args]));
+  process.exit(statuses.some((s) => s !== 0) ? 1 : 0);
+}
+
 const nodeArgs = name === 'test'
   ? ['--test', ...readdirSync(path.join(TOOL_ROOT, 'tests')).filter((f) => f.endsWith('.test.mjs')).map((f) => path.join(TOOL_ROOT, 'tests', f))]
   : [...(command.node ?? []), path.join(TOOL_ROOT, command.script), ...(args.length ? args : command.defaultArgs ?? [])];
 
-const result = spawnSync(process.execPath, nodeArgs, {
-  cwd: project,
-  stdio: 'inherit',
-  env: { ...process.env, CODEBASE_CONTEXT_PROJECT: project }
-});
-process.exit(result.status ?? 1);
+process.exit(run(nodeArgs));
