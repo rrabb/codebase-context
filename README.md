@@ -2,6 +2,8 @@
 
 Builds searchable indexes, checked facts, and plain-text docs for large vendor codebases that AI models were not trained on, so agents can answer from the installed source instead of memory. The first vendor package is ArcGIS Experience Builder (`vendors/exb/`).
 
+Repo: https://github.com/rrabb/codebase-context
+
 ## Use from a project
 
 1. `npm install` in this folder.
