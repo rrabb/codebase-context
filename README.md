@@ -22,6 +22,7 @@ Repo: https://github.com/rrabb/codebase-context
 | `verify` | Index version and coverage checks |
 | `refresh` | codebase-memory graphs, then `index`, then `knowledge` |
 | `combine-dts <in> <out>` | Combine a folder of `.d.ts` files |
+| `install [--dry-run] [--force]` | Link the vendor skills into `.github/skills/` and write the instructions and prompts from templates (project graph names and vendor root filled in). `--force` backs up hand-made files to `.codebase-context/backup/` first. |
 | `test` | Tests against the project's indexes |
 
 Outputs go to the project's `.ai-context/`. Details: [docs/ai-index.md](docs/ai-index.md), [docs/EXB-API-USAGE-INDEX-SPEC.md](docs/EXB-API-USAGE-INDEX-SPEC.md).
