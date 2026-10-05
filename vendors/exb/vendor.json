@@ -1,0 +1,15 @@
+{
+  "id": "exb",
+  "name": "ArcGIS Experience Builder Developer Edition",
+  "version": { "file": "version.json", "path": "exbVersion" },
+  "facts": "facts.json",
+  "docs": [
+    {
+      "id": "guide",
+      "root": "exb-api-ref-docs/experience-builder/guide",
+      "select": "main",
+      "onlineBase": "https://developers.arcgis.com/experience-builder/guide/",
+      "dropLines": ["Use dark colors for code blocksCopy", "Copy"]
+    }
+  ]
+}

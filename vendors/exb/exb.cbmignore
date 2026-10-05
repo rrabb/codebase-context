@@ -1,0 +1,102 @@
+# codebase-memory ignore rules for the ExB vendor graphs.
+# Master copy: npm run ai:refresh copies this file to ArcGISExperienceBuilder/ and
+# ArcGISExperienceBuilder/client/dist/widgets/ before indexing (npm run setup can wipe those copies).
+
+# Temp files and folders (whole-word only, so "templates" and "rasterFunctionTemplate" stay indexed)
+temp/
+tmp/
+*.temp
+*.tmp
+*[._-]temp
+*[._-]temp.*
+temp[._-]*
+
+# Keep top-level architecture guides and agent instructions
+!README.md
+!ARCHITECTURE.md
+!AGENTS.md
+
+# Generated bundles and maps
+*.bundle.js.map
+*.chunk.js.map
+*.bundle.js
+*.bundle.cjs
+*.bundle.mjs
+*.chunk.js
+*.chunk.cjs
+*.chunk.mjs
+*.bundle.css
+*.chunk.css
+
+# Folders
+fonts/
+font/
+.webpack/
+.cache-loader/
+experience-builder/static/
+exb-api-ref-docs/
+
+# ==============================================================================
+# 1. NODE MODULES (any depth)
+# ==============================================================================
+# Matches any directory named 'node_modules' anywhere in the tree and all its contents
+node_modules/
+**/node_modules
+
+# ==============================================================================
+# 2. NAMES ENDING WITH A GUID / HASH (hex only, so long real names such as
+#    exb-source-authority.instructions.md stay indexed)
+# ==============================================================================
+# Hyphenated UUID, e.g. item-12345678-1234-1234-1234-123456789abc (the fixed 8-4-4-4-12 hyphens keep '?' precise)
+*????????-????-????-????-????????????
+*????????-????-????-????-????????????.*
+
+# 32-character continuous hex hash (hex-only: a plain '?' run would match any long name)
+*[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]
+*[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F].*
+
+# Literal suffixes for names ending in 'guid', 'uid', or 'uuid'
+*[_-]guid
+*[_-]guid.*
+*[_-]GUID
+*[_-]GUID.*
+*[_-]uuid
+*[_-]uuid.*
+*[_-]UUID
+*[_-]UUID.*
+*[_-]uid
+*[_-]uid.*
+*[_-]UID
+*[_-]UID.*
+
+# ==============================================================================
+# 3. NAMES STARTING WITH 'GUID-' (not 'guidance-*' skills)
+# ==============================================================================
+GUID-*
+guid-*
+GUID_*
+guid_*
+
+# ==============================================================================
+# 4. TRANSLATIONS, I18N, T9N, L10N (any file or folder containing the term)
+# ==============================================================================
+# Translations
+*translation*
+*Translation*
+*TRANSLATION*
+
+# Internationalization (i18n)
+*i18n*
+*I18n*
+*I18N*
+
+# Translation shorthand (t9n)
+*t9n*
+*T9n*
+*T9N*
+
+# Related localization terms commonly paired with i18n
+*l10n*
+*L10N*
+*locale*
+*Locale*

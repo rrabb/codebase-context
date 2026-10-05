@@ -1,0 +1,20 @@
+{
+  "name": "codebase-context",
+  "version": "0.1.0",
+  "description": "Builds searchable indexes, facts, and agent guidance for large vendor codebases (first vendor: ArcGIS Experience Builder).",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "codebase-context": "bin/codebase-context.mjs"
+  },
+  "scripts": {
+    "test:engine": "node --test tests/knowledge-engine.test.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "fuse.js": "^7.5.0",
+    "ts-morph": "^28.0.0"
+  }
+}
