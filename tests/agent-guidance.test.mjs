@@ -44,6 +44,8 @@ test('install renders complete project-specific guidance without unresolved vari
     assert.ok(!/\{\{[A-Z_]+\}\}/.test(generated));
     assert.ok(generated.includes('vendor/exb/'));
     assert.ok(generated.includes('Required skills for ExB questions and tasks'));
-    assert.ok(Buffer.byteLength(generated) < 8000, `always-on file too large: ${Buffer.byteLength(generated)}`);
+    assert.ok(generated.includes('stands in for an ArcGIS portal'));
+    assert.ok(generated.includes('project setup has not run'));
+    assert.ok(Buffer.byteLength(generated) < 10000, `always-on file too large: ${Buffer.byteLength(generated)}`);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
