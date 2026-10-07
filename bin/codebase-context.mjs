@@ -21,7 +21,7 @@ const commands = {
   refresh: { script: 'src/ai-refresh.mjs', about: 'Graphs, then index, then knowledge (--graph-only | --no-graph)' },
   'combine-dts': { script: 'src/combine-dts.mjs', about: 'Combine a folder of .d.ts files into one file' },
   pack: { script: 'src/pack.mjs', about: 'Pack a versioned vendor index ZIP (--vendor <id>, --out <zip>)' },
-  install: { script: 'src/install.mjs', about: 'Install guidance and optional index (--prebuilt <zip|HTTPS URL>, --sha256 <hash>, --dry-run, --force)' },
+  install: { script: 'src/install.mjs', about: 'Install guidance (--dry-run, --force) and optionally an index (--prebuilt <zip|HTTPS URL>, --sha256 <hash>, --replace-index)' },
   test: { about: 'Run the tool tests against the project' }
 };
 

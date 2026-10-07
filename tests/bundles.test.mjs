@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import os from 'node:os';
@@ -16,21 +17,31 @@ function sample () {
   writeFileSync(path.join(context.output, 'symbols.tsv'), 'path\nArcGISExperienceBuilder/client/jimu-core/index.d.ts\n');
   const zip = path.join(root, 'index.zip');
   packBundle(context, zip);
-  return { root, context, zip, data: readFileSync(zip), target: { ...context, vendorRoot: 'vendor/exb', output: path.join(root, 'target') } };
+  return { root, context, zip, data: readFileSync(zip), target: { ...context, output: path.join(root, 'target') } };
 }
 
-test('bundle round trip verifies hashes and rebases vendor paths', async () => {
+const sha256 = (data) => createHash('sha256').update(data).digest('hex');
+
+test('bundle round trip verifies hashes and keeps files byte for byte', async () => {
   const sampleData = sample();
   try {
     const { files } = installBundle(await readBundle(sampleData.zip), sampleData.target);
     assert.equal(files, 2);
-    assert.match(readFileSync(path.join(sampleData.target.output, 'symbols.tsv'), 'utf8'), /vendor\/exb\/client/);
-    assert.throws(() => installBundle(sampleData.data, sampleData.target), /already exists/);
-    installBundle(sampleData.data, sampleData.target, { force: true });
+    assert.deepEqual(readFileSync(path.join(sampleData.target.output, 'symbols.tsv')), readFileSync(path.join(sampleData.context.output, 'symbols.tsv')));
+    assert.throws(() => installBundle(sampleData.data, sampleData.target), /--replace-index/);
+    installBundle(sampleData.data, sampleData.target, { replace: true });
   } finally { rmSync(sampleData.root, { recursive: true, force: true }); }
 });
 
-test('invalid bundles preserve an existing index even with force', () => {
+test('a bundle built for another vendor folder name is refused', () => {
+  const sampleData = sample();
+  try {
+    assert.throws(() => installBundle(sampleData.data, { ...sampleData.target, vendorRoot: 'vendor/exb' }), /built for vendor folder "ArcGISExperienceBuilder"/);
+    assert.equal(existsSync(sampleData.target.output), false);
+  } finally { rmSync(sampleData.root, { recursive: true, force: true }); }
+});
+
+test('invalid bundles preserve an existing index even with --replace-index', () => {
   const sampleData = sample();
   try {
     mkdirSync(sampleData.target.output);
@@ -45,19 +56,20 @@ test('invalid bundles preserve an existing index even with force', () => {
     ]) {
       const zip = new AdmZip(sampleData.data);
       mutate(zip);
-      assert.throws(() => installBundle(zip.toBuffer(), sampleData.target, { force: true }));
+      assert.throws(() => installBundle(zip.toBuffer(), sampleData.target, { replace: true }));
       assert.equal(readFileSync(path.join(sampleData.target.output, 'keep.txt'), 'utf8'), 'keep');
     }
     assert.throws(() => installBundle(sampleData.data, { ...sampleData.target, version: '1.21.0' }), /version does not match/);
   } finally { rmSync(sampleData.root, { recursive: true, force: true }); }
 });
 
-test('dry run leaves no output and download rejects HTTP and wrong checksums', async () => {
+test('dry run leaves no output; downloads need HTTPS and --sha256; wrong checksums fail', async () => {
   const sampleData = sample();
   try {
     assert.equal(installBundle(sampleData.data, sampleData.target, { dryRun: true }).files, 2);
     assert.throws(() => readFileSync(sampleData.target.output), /ENOENT/);
-    await assert.rejects(readBundle('http://example.invalid/index.zip'), /require HTTPS/);
+    await assert.rejects(readBundle('https://example.invalid/index.zip'), /requires --sha256/);
+    await assert.rejects(readBundle('http://example.invalid/index.zip', '0'.repeat(64)), /require HTTPS/);
     await assert.rejects(readBundle(sampleData.zip, '0'.repeat(64)), /SHA-256 does not match/);
   } finally { rmSync(sampleData.root, { recursive: true, force: true }); }
 });
@@ -65,13 +77,14 @@ test('dry run leaves no output and download rejects HTTP and wrong checksums', a
 test('HTTPS download validates data and refuses a redirect to HTTP', async () => {
   const sampleData = sample();
   const originalFetch = globalThis.fetch;
+  const hash = sha256(sampleData.data);
   try {
     globalThis.fetch = async () => new Response(sampleData.data, { status: 200 });
-    assert.deepEqual(await readBundle('https://example.invalid/index.zip'), sampleData.data);
+    assert.deepEqual(await readBundle('https://example.invalid/index.zip', hash), sampleData.data);
     globalThis.fetch = async () => new Response(null, { status: 302, headers: { location: 'http://example.invalid/index.zip' } });
-    await assert.rejects(readBundle('https://example.invalid/index.zip'), /require HTTPS/);
+    await assert.rejects(readBundle('https://example.invalid/index.zip', hash), /require HTTPS/);
     globalThis.fetch = async () => new Response(null, { status: 404 });
-    await assert.rejects(readBundle('https://example.invalid/index.zip'), /HTTP 404/);
+    await assert.rejects(readBundle('https://example.invalid/index.zip', hash), /HTTP 404/);
   } finally {
     globalThis.fetch = originalFetch;
     rmSync(sampleData.root, { recursive: true, force: true });
@@ -88,7 +101,7 @@ test('install does not write through a symlinked output parent', () => {
   } finally { rmSync(sampleData.root, { recursive: true, force: true }); }
 });
 
-test('real vendor bundle installs under a different root and supports API lookup', (context) => {
+test('real vendor bundle installs in a second project and supports API lookup', (context) => {
   if (!existsSync(path.join(PROJECT_ROOT, '.codebase-context/config.json'))) {
     context.skip('needs a project with generated vendor indexes');
     return;
@@ -103,13 +116,13 @@ test('real vendor bundle installs under a different root and supports API lookup
     const zip = path.join(root, 'real.zip');
     packBundle(source, zip);
     mkdirSync(path.join(root, '.codebase-context'));
-    mkdirSync(path.join(root, 'vendor/exb'), { recursive: true });
-    writeFileSync(path.join(root, 'vendor/exb/version.json'), JSON.stringify({ exbVersion: source.version }));
-    writeFileSync(path.join(root, '.codebase-context/config.json'), JSON.stringify({ vendors: [{ id: 'exb', root: 'vendor/exb', out: '.ai-context/exb' }] }));
+    mkdirSync(path.join(root, source.vendorRoot), { recursive: true });
+    writeFileSync(path.join(root, source.vendorRoot, 'version.json'), JSON.stringify({ exbVersion: source.version }));
+    writeFileSync(path.join(root, '.codebase-context/config.json'), JSON.stringify({ vendors: [{ id: 'exb', root: source.vendorRoot, out: '.ai-context/exb' }] }));
     const destination = bundleContext(root);
     installBundle(readFileSync(zip), destination);
     const result = JSON.parse(execFileSync(process.execPath, [path.join(TOOL_ROOT, 'src/ai-find.mjs'), 'DataSourceManager', '--json'], { env: { ...process.env, CODEBASE_CONTEXT_PROJECT: root }, encoding: 'utf8' }));
     assert.equal(result.results[0].symbol.api_id, 'jimu-core::DataSourceManager');
-    assert.ok(JSON.stringify(result.results[0].declarations).includes('vendor/exb/client/'));
+    assert.ok(JSON.stringify(result.results[0].declarations).includes(`${source.vendorRoot}/client/`));
   } finally { rmSync(root, { recursive: true, force: true }); }
 });

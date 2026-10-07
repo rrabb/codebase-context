@@ -6,10 +6,8 @@ const args = process.argv.slice(2);
 const option = (name) => {
   const index = args.indexOf(name);
   if (index < 0)
-
     return undefined;
   if (!args[index + 1] || args[index + 1].startsWith('--'))
-
     throw new Error(`${name} requires a value.`);
   return args[index + 1];
 };

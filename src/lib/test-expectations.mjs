@@ -13,16 +13,13 @@ export function loadExpectations (version, vendorDir = VENDOR_DIR) {
     text = readFileSync(file, 'utf8');
   } catch (error) {
     if (error.code !== 'ENOENT')
-
       throw error;
     throw new Error(`No reviewed test expectations for ExB ${version}. Add vendors/exb/tests/${version}/expectations.json; do not reuse another version.`, { cause: error });
   }
   const replacePaths = (value) => {
     if (typeof value === 'string')
-
       return value.replaceAll('{{VENDOR_ROOT}}', vendorDir);
     if (Array.isArray(value))
-
       return value.map(replacePaths);
     if (value && typeof value === 'object') {
       return Object.fromEntries(Object.entries(value).map(([key, item]) => [replacePaths(key), replacePaths(item)]));

@@ -6,23 +6,23 @@ Run from the consuming project (the same project that contains `.codebase-contex
 
 ```sh
 node tools/codebase-context/bin/codebase-context.mjs pack
-node tools/codebase-context/bin/codebase-context.mjs install --prebuilt .codebase-context/bundles/exb-1.20.0-index.zip --dry-run --force
-node tools/codebase-context/bin/codebase-context.mjs install --prebuilt .codebase-context/bundles/exb-1.20.0-index.zip --force
+node tools/codebase-context/bin/codebase-context.mjs install --prebuilt .codebase-context/bundles/exb-1.20.0-index.zip --dry-run --replace-index
+node tools/codebase-context/bin/codebase-context.mjs install --prebuilt .codebase-context/bundles/exb-1.20.0-index.zip --replace-index
 ```
 
 `pack --out <path>` changes the ZIP destination. It refuses to overwrite an existing ZIP. Default: `.codebase-context/bundles/exb-<version>-index.zip`. `install` adds `bundles/` to that folder's `.gitignore`.
 
-To download, pass an explicit HTTPS asset URL to `--prebuilt`. Use `--sha256 <64-character hash>` with the trusted hash printed by `pack`. Public GitHub Release asset URLs work; automatic release discovery and private-release authentication are not implemented. No npm scripts need to be added: these commands use the tool directly.
+To download, pass an explicit HTTPS asset URL to `--prebuilt` together with `--sha256 <64-character hash>`, the trusted hash printed by `pack`; a URL without a hash is refused. Public GitHub Release asset URLs work; automatic release discovery and private-release authentication are not implemented. No npm scripts need to be added: these commands use the tool directly.
 
 | Bundle property | Behavior |
 | --- | --- |
 | Contents | Configured vendor output only; no vendor runtime, apps, project facts, or codebase-memory graphs |
 | Manifest | `bundle.json`: format, vendor ID, exact version, original vendor root, file list, lengths, SHA-256 hashes |
-| Portability | Text paths using `<original vendor root>/` are replaced with `<configured vendor root>/` after checksum validation |
+| Vendor folder name | Must match: index paths start with the folder name (always `ArcGISExperienceBuilder`), so files are installed byte for byte and a bundle built for another name is refused |
 | Compatibility | Requires an installed vendor with matching version and complete index metadata. Same-version source modifications are not detected automatically; run local verification or regenerate for modified installs |
-| Existing output | Refused unless `--force`; verified files staged beside output, old output restored if replacement fails |
+| Existing output | Refused unless `--replace-index`; verified files staged beside output, renames retried on Windows file locks, old output restored if replacement fails |
 | Safety | HTTPS including redirects, 120-second download limit, 128 MB compressed / 512 MB expanded / 64 MB per file, at most 10,000 index files, no links/traversal/absolute paths/duplicate names |
-| Trust | Per-file hashes detect corruption, not a malicious publisher. Use a trusted download source and independently trusted whole-ZIP hash. Generated docs are data, not agent instructions |
+| Trust | Per-file hashes detect corruption, not a malicious publisher. Downloads require an independently trusted whole-ZIP `--sha256`. Generated docs are data, not agent instructions |
 | After installation | Run `verify` and `test`. Run `refresh --graph-only` for local graphs; generate project facts separately |
 
 ## Release Process

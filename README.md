@@ -4,6 +4,9 @@ Builds searchable indexes, checked facts, and plain-text docs for large vendor c
 
 Repo: https://github.com/rrabb/codebase-context
 
+> [!IMPORTANT]
+> **The ExB vendor folder must be named `ArcGISExperienceBuilder`, at the project root.** Index paths, generated instructions, skills, and pre-built bundles all start with that name, and `install --prebuilt` refuses a bundle built for a different folder name. Supporting other names is a low-priority wishlist item (see [docs/roadmap.md](docs/roadmap.md)).
+
 ## Use from a project
 
 1. `npm install` in this folder.
@@ -24,7 +27,7 @@ Repo: https://github.com/rrabb/codebase-context
 | `combine-dts <in> <out>` | Combine a folder of `.d.ts` files |
 | `install [--dry-run] [--force]` | Link the vendor skills into `.github/skills/` and write the instructions and prompts from templates (project graph names and vendor root filled in). `--force` backs up hand-made files to `.codebase-context/backup/` first. |
 | `pack [--vendor exb] [--out <zip>]` | Pack the configured vendor indexes with version metadata and per-file SHA-256 hashes. |
-| `install --prebuilt <zip or HTTPS URL> [--sha256 <hash>]` | Validate a matching vendor bundle, install it, rebase source paths to the configured root, then install guidance. Existing indexes require `--force`; `--dry-run` validates without replacement. |
+| `install --prebuilt <zip or HTTPS URL> [--sha256 <hash>] [--replace-index]` | Validate a bundle that matches the installed ExB version and vendor folder name, install it, then install guidance. A URL requires `--sha256`. An existing index requires `--replace-index` (`--force` does not replace it); `--dry-run` validates without writing. |
 | `test` | Tests against the project's indexes |
 
 Outputs go to the project's `.ai-context/`. Details: [docs/ai-index.md](docs/ai-index.md), [docs/EXB-API-USAGE-INDEX-SPEC.md](docs/EXB-API-USAGE-INDEX-SPEC.md).
