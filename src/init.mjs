@@ -31,6 +31,7 @@ if (existsSync(configPath) && !force) {
 }
 
 const config = {
+  targets: ['copilot'],
   vendors: [{ id: 'exb', root: path.relative(PROJECT_ROOT, path.resolve(PROJECT_ROOT, exbRoot)).replace(/\\/g, '/'), out: '.ai-context/exb' }]
 };
 mkdirSync(dir, { recursive: true });

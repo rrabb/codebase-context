@@ -5,6 +5,8 @@ import { existsSync, lstatSync, readFileSync, readdirSync, realpathSync } from '
 import path from 'node:path';
 
 import { PROJECT_ROOT, TOOL_ROOT } from './lib/project-root.mjs';
+import { hashText, readBlock } from './lib/marked-block.mjs';
+import { resolveTargets, skillDirsFor } from './lib/targets.mjs';
 
 let fails = 0;
 const ok = (msg) => console.log(`ok   ${msg}`);
@@ -41,22 +43,38 @@ if (!existsSync(configPath)) {
       : warn(`no indexes at ${vendor.out} yet (run refresh)`);
 
     const skillsDir = path.join(packageDir, 'skills');
-    for (const name of existsSync(skillsDir) ? readdirSync(skillsDir) : []) {
-      const target = path.join(PROJECT_ROOT, '.github', 'skills', name);
-      if (!existsSync(target))
-        warn(`skill ${name} not installed (run install)`);
-      else if (!lstatSync(target).isSymbolicLink() || realpathSync(target) !== realpathSync(path.join(skillsDir, name)))
-        warn(`skill ${name} is not linked to this tool (run install --force)`);
+    let skillDirs = ['.github/skills'];
+    try {
+      skillDirs = skillDirsFor(resolveTargets(config));
+    } catch (error) {
+      fail(error.message);
     }
+    for (const name of existsSync(skillsDir) ? readdirSync(skillsDir) : []) {
+      for (const dir of skillDirs) {
+        const target = path.join(PROJECT_ROOT, dir, name);
+        if (!existsSync(target))
+          warn(`skill ${name} not installed in ${dir} (run install)`);
+        else if (!lstatSync(target).isSymbolicLink() || realpathSync(target) !== realpathSync(path.join(skillsDir, name)))
+          warn(`skill ${dir}/${name} is not linked to this tool (run install --force)`);
+      }
+    }
+    existsSync(path.join(packageDir, 'agents', 'AGENTS.block.md')) && !readBlock(existsSync(path.join(PROJECT_ROOT, 'AGENTS.md')) ? readFileSync(path.join(PROJECT_ROOT, 'AGENTS.md'), 'utf8') : '', vendor.id) &&
+      warn(`AGENTS.md has no generated "${vendor.id}" block (run install)`);
   }
 }
 
 const manifestPath = path.join(PROJECT_ROOT, '.codebase-context', 'installed.json');
 if (existsSync(manifestPath)) {
   const installed = readJson(manifestPath);
-  const changed = Object.entries(installed).filter(([file, h]) => {
+  const changed = Object.entries(installed).filter(([key, h]) => {
+    const [file, blockId] = key.split('#');
     const p = path.join(PROJECT_ROOT, file);
-    return !existsSync(p) || hash(readFileSync(p, 'utf8')) !== h;
+    if (!existsSync(p))
+      return true;
+    if (!blockId)
+      return hash(readFileSync(p, 'utf8')) !== h;
+    const block = readBlock(readFileSync(p, 'utf8'), blockId);
+    return block === null || hashText(block) !== h;
   });
   changed.length
     ? changed.forEach(([file]) => warn(`${file} was edited or removed since install (move changes into the template, then run install)`))
