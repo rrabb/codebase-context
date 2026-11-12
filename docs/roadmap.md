@@ -4,6 +4,8 @@ Working notes for codebase-context: open work, decisions with their reasons, and
 
 ## To do
 
+Frozen 261112. Tracking moved to [work-tracking/dashboard.md](../work-tracking/dashboard.md). Import status: [dashboard Start here](../work-tracking/dashboard.md#start-here)
+
 | # | Item | Notes |
 | --- | --- | --- |
 | 1 | Remove the install backup in cpe-exb | `cpe-exb/.codebase-context/backup/2026-10-05T20-52-37-288Z/` holds the skills and instructions replaced by the first `install --force`. Delete once the linked skills are confirmed in the chat customizations view. The folder is ignored by `.codebase-context/.gitignore`. |

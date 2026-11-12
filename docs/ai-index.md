@@ -748,6 +748,8 @@ Instructions are **rules auto-applied by file path** (via each file's `applyTo` 
 
 ### ✨ Add / enhance
 
+Frozen 261112. Tracking moved to [work-tracking/dashboard.md](../work-tracking/dashboard.md). Import status: [dashboard Start here](../work-tracking/dashboard.md#start-here)
+
 - 🧬 **True semantic/conceptual search (researched, not yet implemented).** Our current `--semantic` is a hand-rolled concept map + TF-IDF over doc summaries only - it does not improve `ai:find`'s core symbol scoring. Researched replacements on GitHub:
 Since documenting this research, Fuse.js Token Search was adopted for lexical fuzzy/typo/abbreviation scoring (see Shipped, above). What remains genuinely deferred is true *conceptual* search via embeddings - it cannot map "loading spinner" to `Loading`/`Progress` without our hand-maintained concept map. Real embeddings (e.g. `@xenova/transformers` running locally, or a hosted API) would enable that, but need a real dependency/architecture decision: a local model download (100s of MB) or network egress, either of which changes the offline/zero-dependency guarantees of `.scripts/`. Deliberately deferred until that tradeoff is explicitly approved. Other libraries researched but not adopted:
   - **[MiniSearch](https://github.com/lucaong/minisearch)** (6.1k★, zero deps, ~29 kB) - real BM25 ranking, prefix search, `fuzzy: 0.2` edit-distance tolerance; could replace our TF-IDF layer in `lib/semantic.mjs`.
@@ -761,6 +763,8 @@ Since documenting this research, Fuse.js Token Search was adopted for lexical fu
 - 🏷️ **Expand the `api/` regression guard.** Only 5 "known-good" API ids are asserted after a catalog rebuild; growing this list (one per package, one per visibility class) would catch more silent extraction regressions.
 
 ### 🧹 Simplify / candidate removals
+
+Frozen 261112. Tracking moved to [work-tracking/dashboard.md](../work-tracking/dashboard.md). Import status: [dashboard Start here](../work-tracking/dashboard.md#start-here)
 
 - 🧷 **Keep both `dist-widgets/` and `dist-widgets-ts/` (decided).** The ts variant is now at file parity (it also emits `catalog.tsv`, `manifests.tsv`, `module-usage.tsv`, and `jsx-usage.tsv`, the last from real JSX elements). They are still not interchangeable: the regex variant is the ~1s, dependency-free, always-fresh default and the ts-morph fallback/diff cross-check, so neither is retired.
 - 📑 **Slim legacy `symbols.tsv`** to just non-exported names once `api/symbols.tsv` covers the exported surface everywhere `ai:find` reads.
