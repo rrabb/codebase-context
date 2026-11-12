@@ -2,6 +2,15 @@
   "name": "codebase-context",
   "version": "0.1.0",
   "description": "Builds searchable indexes, facts, and agent guidance for large vendor codebases (first vendor: ArcGIS Experience Builder).",
+  "author": {
+    "name": "Reiman Rabbani",
+    "email": "rrabbani@esri.com",
+    "url": "https://github.com/rrabb"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rrabb/codebase-context.git"
+  },
   "type": "module",
   "private": true,
   "bin": {
