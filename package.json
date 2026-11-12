@@ -7,9 +7,9 @@
     "email": "rrabbani@esri.com",
     "url": "https://github.com/rrabb"
   },
-  "repository": { 
-    "type": "git", 
-    "url": "https://github.com/rrabb/codebase-context" 
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rrabb/codebase-context.git"
   },
   "type": "module",
   "private": true,
